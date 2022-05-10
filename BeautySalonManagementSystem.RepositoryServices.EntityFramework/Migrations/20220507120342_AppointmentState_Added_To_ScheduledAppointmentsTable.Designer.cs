@@ -4,6 +4,7 @@ using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BeautySalonManagementSystem.RepositoryServices.EntityFramework.Migrations
 {
     [DbContext(typeof(BeautySalonContext))]
-    partial class BeautySalonContextModelSnapshot : ModelSnapshot
+    [Migration("20220507120342_AppointmentState_Added_To_ScheduledAppointmentsTable")]
+    partial class AppointmentState_Added_To_ScheduledAppointmentsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,22 +23,6 @@ namespace BeautySalonManagementSystem.RepositoryServices.EntityFramework.Migrati
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("BeautySalonManagementSystem.RepositoryServices.EntityFramework.NonWorkingDay", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("NonWorkingDays");
-                });
 
             modelBuilder.Entity("BeautySalonManagementSystem.RepositoryServices.EntityFramework.ScheduledAppointment", b =>
                 {

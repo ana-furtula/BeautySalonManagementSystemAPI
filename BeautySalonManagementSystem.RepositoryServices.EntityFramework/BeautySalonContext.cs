@@ -21,6 +21,7 @@ namespace BeautySalonManagementSystem.RepositoryServices.EntityFramework
         public DbSet<User> Users { get; set; }
         public DbSet<Treatment> Treatments{ get; set; }
         public DbSet<ScheduledAppointment> ScheduledAppointments { get; set; }
+        public DbSet<NonWorkingDay> NonWorkingDays { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -50,10 +50,61 @@ namespace BeautySalonManagementSystem.Controllers
                 {
                     User = user,
                     Treatment = treatment,
-                    Date = date
+                    Date = date,
+                    State = AppointmentState.RECEIVED
                 };
 
                 dbContext.ScheduledAppointments.Add(appointment);
+                dbContext.SaveChanges();
+
+                return new JsonResult("Success");
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+
+        }
+
+        [HttpPut("accept/{appointmentId}")]
+        public IActionResult AcceptAppointment(int appointmentId)
+        {
+            try
+            {
+                var appointment = dbContext.ScheduledAppointments.Where(x => x.Id == appointmentId).FirstOrDefault();
+
+                if (appointment == null)
+                {
+                    return BadRequest();
+                }
+
+                appointment.State = AppointmentState.ACCEPTED;
+
+                dbContext.SaveChanges();
+
+                return new JsonResult("Success");
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+
+        }
+
+        [HttpPut("reject/{appointmentId}")]
+        public IActionResult RejectAppointment(int appointmentId)
+        {
+            try
+            {
+                var appointment = dbContext.ScheduledAppointments.Where(x => x.Id == appointmentId).FirstOrDefault();
+
+                if (appointment == null)
+                {
+                    return BadRequest();
+                }
+
+                appointment.State = AppointmentState.REJECTED;
+
                 dbContext.SaveChanges();
 
                 return new JsonResult("Success");
@@ -77,8 +128,8 @@ namespace BeautySalonManagementSystem.Controllers
             return new JsonResult(appointments);
         }
 
-        [HttpPost("{appointmentId}")]
-        public IActionResult CancelAppointment(int appointmentId)
+        [HttpDelete("{appointmentId}")]
+        public IActionResult DeleteAppointment(int appointmentId)
         {
             try
             {

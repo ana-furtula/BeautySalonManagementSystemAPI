@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace BeautySalonManagementSystem.RepositoryServices.EntityFramework
 {
-    public class ScheduledAppointment
+    public class NonWorkingDay
     {
         public int Id { get; set; }
-        public User User { get; set; }
-        public Treatment Treatment { get; set; }
         public DateTime Date { get; set; }
-        public AppointmentState State { get; set; }
     }
 }
