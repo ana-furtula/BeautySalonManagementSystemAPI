@@ -1,6 +1,7 @@
 ﻿using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace BeautySalonManagementSystem.Controllers
 {
@@ -31,11 +32,11 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(string name, string description, double price)
+        public IActionResult Post([FromBody]  Treatment treatment)
         {
             try
             {
-                dbContext.Treatments.Add(new Treatment() { Name = name, Description = description, Price = price });
+                dbContext.Treatments.Add(treatment);
                 dbContext.SaveChanges();
                 return new JsonResult("Success");
             }

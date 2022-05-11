@@ -15,19 +15,20 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(string email, string password, string firstName, string lastName)
+        public IActionResult Post([FromBody] User user)
         {
             try
             {
-                var user = dbContext.Users.FirstOrDefault(x => x.Email == email);
+                var userDb = dbContext.Users.FirstOrDefault(x => x.Email == user.Email);
 
-                if (user != null)
+                if (userDb != null)
                 {
                     return new JsonResult("User already exists!");
                 }
                 else
                 {
-                    dbContext.Users.Add(new User() { Email = email, Password = password, FirstName = firstName, LastName = lastName, Role = Role.USER });
+                    user.Role = Role.USER;
+                    dbContext.Users.Add(user);
                     dbContext.SaveChanges();
                     return new JsonResult("Successful registration!");
                 }

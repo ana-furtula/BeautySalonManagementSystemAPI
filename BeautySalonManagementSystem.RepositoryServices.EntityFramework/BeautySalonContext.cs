@@ -22,6 +22,7 @@ namespace BeautySalonManagementSystem.RepositoryServices.EntityFramework
         public DbSet<Treatment> Treatments{ get; set; }
         public DbSet<ScheduledAppointment> ScheduledAppointments { get; set; }
         public DbSet<NonWorkingDay> NonWorkingDays { get; set; }
+        public DbSet<Notification> Notifications{ get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -36,6 +37,15 @@ namespace BeautySalonManagementSystem.RepositoryServices.EntityFramework
                );
 
             base.OnModelCreating(builder);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog= BeautySalon_App_DB;Integrated Security=True;Connect Timeout=30;MultipleActiveResultSets=True;", builder =>
+            {
+                builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+            });
+            base.OnConfiguring(optionsBuilder);
         }
     }
 }

@@ -15,12 +15,12 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(string email, string password)
+        public IActionResult Post([FromBody] User user)
         {
-            var user = dbContext.Users.FirstOrDefault(x => x.Email == email && x.Password == password);
+            var userDb = dbContext.Users.FirstOrDefault(x => x.Email == user.Email && x.Password == user.Password);
             if (user == null)
             {
-                return new JsonResult("Unknown user!");
+                return BadRequest();
             }
             else
             {

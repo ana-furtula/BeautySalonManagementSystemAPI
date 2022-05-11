@@ -1,4 +1,5 @@
-﻿using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
+﻿using BeautySalonManagementSystem.Models;
+using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
 using Google.Rpc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,13 +31,13 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(string email, int treatmentId, int day, int month, int year, int hour, int minute)
+        public IActionResult Post([FromBody] AppointmentModel appointment)
         {
             try
             {
-                var date = new DateTime(year, month, day, hour, minute, 0);
-                var user = dbContext.Users.FirstOrDefault(x => x.Email == email);
-                var treatment = dbContext.Treatments.FirstOrDefault(x => x.Id == treatmentId);
+                var date = new DateTime(appointment.Year, appointment.Month, appointment.Day, appointment.Hour, appointment.Minute, 0);
+                var user = dbContext.Users.FirstOrDefault(x => x.Email == appointment.Email);
+                var treatment = dbContext.Treatments.FirstOrDefault(x => x.Id == appointment.TreatmentId);
 
                 if (user == null || treatment == null)
                     return BadRequest("User and treatment must be known.");
@@ -46,7 +47,7 @@ namespace BeautySalonManagementSystem.Controllers
                     return BadRequest("Unavailable");
                 }
 
-                var appointment = new ScheduledAppointment()
+                var newAppointment = new ScheduledAppointment()
                 {
                     User = user,
                     Treatment = treatment,
@@ -54,7 +55,7 @@ namespace BeautySalonManagementSystem.Controllers
                     State = AppointmentState.RECEIVED
                 };
 
-                dbContext.ScheduledAppointments.Add(appointment);
+                dbContext.ScheduledAppointments.Add(newAppointment);
                 dbContext.SaveChanges();
 
                 return new JsonResult("Success");

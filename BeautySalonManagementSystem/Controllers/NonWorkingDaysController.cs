@@ -1,4 +1,5 @@
-﻿using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
+﻿using BeautySalonManagementSystem.Models;
+using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BeautySalonManagementSystem.Controllers
@@ -23,13 +24,13 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(int day, int month, int year)
+        public IActionResult Post([FromBody] DateModel data)
         {
             try
             {
                 var date = new NonWorkingDay
                 {
-                    Date = new DateTime(year: year, month: month, day: day)
+                    Date = new DateTime(year: data.Year, month: data.Month, day:data.Day)
                 };
 
                 dbContext.NonWorkingDays.Add(date);
@@ -46,11 +47,11 @@ namespace BeautySalonManagementSystem.Controllers
 
 
         [HttpDelete]
-        public IActionResult Delete(int day, int month, int year)
+        public IActionResult Delete([FromBody] DateModel data)
         {
             try
             {
-                var date = new DateTime(year: year, month: month, day: day);
+                var date = new DateTime(year: data.Year, month: data.Month, day: data.Day);
                 var dateFromDb = dbContext.NonWorkingDays.Where(x => x.Date == date).FirstOrDefault();
                 if (dateFromDb != null)
                 {
