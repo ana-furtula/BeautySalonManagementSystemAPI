@@ -26,6 +26,7 @@ namespace BeautySalonManagementSystem.Controllers
                             .Include(x => x.User)
                             .Include(x => x.Treatment)
                             .Where(x => x.State == AppointmentState.ACCEPTED)
+                            .OrderBy(x => x.Date)
                             .ToList();
             var appos = new List<Object>();
             foreach (var a in appointments)
@@ -50,6 +51,7 @@ namespace BeautySalonManagementSystem.Controllers
                             .Include(x => x.User)
                             .Include(x => x.Treatment)
                             .Where(x => x.State == AppointmentState.REQUIRED)
+                            .OrderBy(x => x.Date)
                             .ToList();
             var appos = new List<Object>();
             foreach (var a in appointments)
@@ -202,6 +204,7 @@ namespace BeautySalonManagementSystem.Controllers
                             .Include(x => x.User)
                             .Include(x => x.Treatment)
                             .Where(x => x.User.Email == userMail)
+                            .OrderBy(x => x.Date)
                             .ToList();
 
             var appos = new List<Object>();
