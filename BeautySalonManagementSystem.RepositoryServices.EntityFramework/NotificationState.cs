@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace BeautySalonManagementSystem.RepositoryServices.EntityFramework
 {
-    public class Notification
+    public enum NotificationState
     {
-        public int Id { get; set; }
-        public User User { get; set; }
-        public string Message { get; set; }
-        public NotificationState State { get; set; }
+        READ = 1 , UNREAD = 2
     }
 }

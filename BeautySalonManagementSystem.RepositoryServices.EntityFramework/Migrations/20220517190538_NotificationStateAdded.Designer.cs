@@ -4,6 +4,7 @@ using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BeautySalonManagementSystem.RepositoryServices.EntityFramework.Migrations
 {
     [DbContext(typeof(BeautySalonContext))]
-    partial class BeautySalonContextModelSnapshot : ModelSnapshot
+    [Migration("20220517190538_NotificationStateAdded")]
+    partial class NotificationStateAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,3 +1,4 @@
+using BeautySalonManagementSystem.Models;
 using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,16 +16,16 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] User user)
+        public IActionResult Post([FromBody] LoginModel user)
         {
             var userDb = dbContext.Users.FirstOrDefault(x => x.Email == user.Email && x.Password == user.Password);
-            if (user == null)
+            if (userDb == null)
             {
-                return BadRequest();
+                return BadRequest("User does not exist!");
             }
             else
             {
-                return new JsonResult(new { user.Email, user.FirstName, user.LastName, Role = user.Role.ToString() });
+                return new JsonResult(new { userDb.Email, userDb.FirstName, userDb.LastName, Role = userDb.Role.ToString() });
             }
         }
     }

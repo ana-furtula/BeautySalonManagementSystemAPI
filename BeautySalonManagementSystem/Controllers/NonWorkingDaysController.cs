@@ -1,6 +1,7 @@
 ﻿using BeautySalonManagementSystem.Models;
 using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BeautySalonManagementSystem.Controllers
 {
@@ -19,8 +20,18 @@ namespace BeautySalonManagementSystem.Controllers
         public IActionResult Get()
         {
             var days = dbContext.NonWorkingDays.Select(x => x.Date).ToList();
+            var dates = new List<Object>();
+            foreach (var day in days)
+            {
+                dates.Add(new
+                {
+                    Month = day.Month,
+                    Year = day.Year,
+                    Day = day.Day
+                });
+            }
 
-            return new JsonResult(days);
+            return new JsonResult(dates);
         }
 
         [HttpPost]
@@ -32,6 +43,11 @@ namespace BeautySalonManagementSystem.Controllers
                 {
                     Date = new DateTime(year: data.Year, month: data.Month, day:data.Day)
                 };
+
+                if (dbContext.ScheduledAppointments.Where(x => x.Date.Date.CompareTo(date.Date.Date)==0).Any())
+                {
+                    return BadRequest("There are appointments scheduled or waiting to be scheduled for the chosen day.");
+                }
 
                 dbContext.NonWorkingDays.Add(date);
                 dbContext.SaveChanges();

@@ -13,6 +13,8 @@ builder.Services.AddDbContext<BeautySalonContext>(options =>
         options.UseSqlServer(
             builder.Configuration.GetConnectionString("BeautySalonContextDB")));
 
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -22,9 +24,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(builder => builder
+       .AllowAnyOrigin()
+       .AllowAnyMethod()
+       .WithHeaders("Accept", "Content-Type", "Origin", "X-My-Header"));
+
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+/*app.UseAuthorization();*/
 
 app.MapControllers();
 

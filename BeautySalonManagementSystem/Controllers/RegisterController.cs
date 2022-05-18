@@ -23,11 +23,11 @@ namespace BeautySalonManagementSystem.Controllers
 
                 if (userDb != null)
                 {
-                    return new JsonResult("User already exists!");
+                    return BadRequest("User already exists!"); 
                 }
                 else
                 {
-                    user.Role = Role.USER;
+                    user.Role = Role.CLIENT;
                     dbContext.Users.Add(user);
                     dbContext.SaveChanges();
                     return new JsonResult("Successful registration!");
@@ -35,7 +35,7 @@ namespace BeautySalonManagementSystem.Controllers
             }
             catch (Exception)
             {
-                return new JsonResult("Failed");
+                return BadRequest("Server failed to execute request. Please, try again.");
             }
 
         }

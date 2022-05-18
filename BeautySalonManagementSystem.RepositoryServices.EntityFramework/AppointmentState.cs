@@ -2,6 +2,6 @@
 {
     public enum AppointmentState
     {
-        RECEIVED=1, REJECTED, ACCEPTED
+        REQUIRED=1, REJECTED=2, ACCEPTED=3, DELETED=4
     }
 }

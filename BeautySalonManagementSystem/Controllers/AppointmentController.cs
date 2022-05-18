@@ -19,15 +19,52 @@ namespace BeautySalonManagementSystem.Controllers
             this.dbContext = dbContext;
         }
 
-        [HttpGet]
-        public IActionResult Get()
+        [HttpGet("scheduled")]
+        public IActionResult GetAccepted()
         {
             var appointments = dbContext.ScheduledAppointments
                             .Include(x => x.User)
                             .Include(x => x.Treatment)
+                            .Where(x => x.State == AppointmentState.ACCEPTED)
                             .ToList();
+            var appos = new List<Object>();
+            foreach (var a in appointments)
+            {
+                appos.Add(new
+                {
+                    id = a.Id,
+                    user = a.User,
+                    date = a.Date.ToShortDateString(),
+                    time = a.Date.ToShortTimeString(),
+                    treatment = a.Treatment,
+                    status = a.State.ToString()
+                });
+            }
+            return new JsonResult(appos);
+        }
 
-            return new JsonResult(appointments);
+        [HttpGet("required")]
+        public IActionResult GetRequired()
+        {
+            var appointments = dbContext.ScheduledAppointments
+                            .Include(x => x.User)
+                            .Include(x => x.Treatment)
+                            .Where(x => x.State == AppointmentState.REQUIRED)
+                            .ToList();
+            var appos = new List<Object>();
+            foreach (var a in appointments)
+            {
+                appos.Add(new
+                {
+                    id = a.Id,
+                    user = a.User,
+                    date = a.Date.ToShortDateString(),
+                    time = a.Date.ToShortTimeString(),
+                    treatment = a.Treatment,
+                    status = a.State.ToString()
+                });
+            }
+            return new JsonResult(appos);
         }
 
         [HttpPost]
@@ -42,7 +79,7 @@ namespace BeautySalonManagementSystem.Controllers
                 if (user == null || treatment == null)
                     return BadRequest("User and treatment must be known.");
 
-                if (dbContext.ScheduledAppointments.Where(x => x.Date == date && x.Treatment.Id == treatment.Id).Any() || date.DayOfWeek == 0)
+                if (dbContext.ScheduledAppointments.Where(x => x.Date == date && x.Treatment.Id == treatment.Id).Any() || date.DayOfWeek == DayOfWeek.Sunday || date.DayOfWeek == DayOfWeek.Saturday)
                 {
                     return BadRequest("Unavailable");
                 }
@@ -52,7 +89,7 @@ namespace BeautySalonManagementSystem.Controllers
                     User = user,
                     Treatment = treatment,
                     Date = date,
-                    State = AppointmentState.RECEIVED
+                    State = AppointmentState.REQUIRED
                 };
 
                 dbContext.ScheduledAppointments.Add(newAppointment);
@@ -67,12 +104,37 @@ namespace BeautySalonManagementSystem.Controllers
 
         }
 
-        [HttpPut("accept/{appointmentId}")]
-        public IActionResult AcceptAppointment(int appointmentId)
+        [HttpPost("checkTime")]
+        public IActionResult IsTimeAvailable([FromBody] DateModel dateTime)
         {
             try
             {
-                var appointment = dbContext.ScheduledAppointments.Where(x => x.Id == appointmentId).FirstOrDefault();
+                var date = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour.GetValueOrDefault(), dateTime.Minute.GetValueOrDefault(), 0);
+
+                if (dbContext.ScheduledAppointments.Where(x => x.Date == date).Any())
+                {
+                    return new JsonResult("false");
+                }
+
+                return new JsonResult("true");
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+
+        }
+
+        [HttpPut("accept")]
+        public IActionResult AcceptAppointment([FromBody] int appointmentId)
+        {
+            try
+            {
+                var appointment = dbContext.ScheduledAppointments
+                            .Include(x => x.User)
+                            .Include(x => x.Treatment)
+                            .Where(x => x.Id == appointmentId)
+                            .FirstOrDefault();
 
                 if (appointment == null)
                 {
@@ -92,20 +154,35 @@ namespace BeautySalonManagementSystem.Controllers
 
         }
 
-        [HttpPut("reject/{appointmentId}")]
-        public IActionResult RejectAppointment(int appointmentId)
+        [HttpPut("reject")]
+        public IActionResult RejectAppointment([FromBody] int appointmentId)
         {
             try
             {
-                var appointment = dbContext.ScheduledAppointments.Where(x => x.Id == appointmentId).FirstOrDefault();
+                var appointment = dbContext.ScheduledAppointments
+                            .Include(x => x.User)
+                            .Include(x => x.Treatment)
+                            .Where(x => x.Id == appointmentId)
+                            .FirstOrDefault();
 
                 if (appointment == null)
                 {
                     return BadRequest();
                 }
 
-                appointment.State = AppointmentState.REJECTED;
+                var notification = new Notification()
+                {
+                    User = appointment.User,
+                    Message = $"{appointment.User.FirstName}, Vaš zahtev za zakazivnje termina " +
+                    $"{appointment.Date.ToShortDateString()} u {appointment.Date.ToShortTimeString()} časova, " +
+                    $"za uslugu {appointment.Treatment.Name.ToUpper()}, je odbijen. Molimo Vas da pokušate da" +
+                    $" zakažete u nekom drugom terminu.",
+                    State = NotificationState.UNREAD
+                };
 
+                dbContext.Notifications.Add(notification);
+
+                dbContext.Remove(appointment);
                 dbContext.SaveChanges();
 
                 return new JsonResult("Success");
@@ -120,13 +197,28 @@ namespace BeautySalonManagementSystem.Controllers
         [HttpGet("{userMail}")]
         public IActionResult GetAllForUser(string userMail)
         {
+
             var appointments = dbContext.ScheduledAppointments
                             .Include(x => x.User)
                             .Include(x => x.Treatment)
                             .Where(x => x.User.Email == userMail)
                             .ToList();
 
-            return new JsonResult(appointments);
+            var appos = new List<Object>();
+
+            foreach (var a in appointments)
+            {
+                appos.Add(new
+                {
+                    id = a.Id,
+                    user = a.User,
+                    date = a.Date.ToShortDateString(),
+                    time = a.Date.ToShortTimeString(),
+                    treatment = a.Treatment,
+                    status = a.State.ToString()
+                });
+            }
+            return new JsonResult(appos);
         }
 
         [HttpDelete("{appointmentId}")]
@@ -139,6 +231,23 @@ namespace BeautySalonManagementSystem.Controllers
                           .Include(x => x.Treatment)
                           .Where(x => x.Id == appointmentId)
                           .FirstOrDefault();
+
+                if (appointment == null)
+                {
+                    return BadRequest();
+                }
+
+                var notification = new Notification()
+                {
+                    User = appointment.User,
+                    Message = $"{appointment.User.FirstName}, vaš termin {appointment.Date.ToShortDateString()}" +
+                    $" u {appointment.Date.ToShortTimeString()} časova, za uslugu " +
+                    $"{appointment.Treatment.Name.ToUpper()}, je otkazan. Molimo Vas da pokušate da zakažete" +
+                    $" u nekom drugom terminu.",
+                    State = NotificationState.UNREAD
+                };
+
+                dbContext.Notifications.Add(notification);
 
                 dbContext.Remove(appointment);
                 dbContext.SaveChanges();

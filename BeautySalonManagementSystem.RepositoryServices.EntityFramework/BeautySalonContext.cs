@@ -47,5 +47,6 @@ namespace BeautySalonManagementSystem.RepositoryServices.EntityFramework
             });
             base.OnConfiguring(optionsBuilder);
         }
+
     }
 }
