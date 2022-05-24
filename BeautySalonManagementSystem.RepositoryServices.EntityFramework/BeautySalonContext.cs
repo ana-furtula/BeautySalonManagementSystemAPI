@@ -19,10 +19,11 @@ namespace BeautySalonManagementSystem.RepositoryServices.EntityFramework
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Treatment> Treatments{ get; set; }
+        public DbSet<Treatment> Treatments { get; set; }
         public DbSet<ScheduledAppointment> ScheduledAppointments { get; set; }
         public DbSet<NonWorkingDay> NonWorkingDays { get; set; }
-        public DbSet<Notification> Notifications{ get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<WorkingHour> WorkingHours { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -32,8 +33,19 @@ namespace BeautySalonManagementSystem.RepositoryServices.EntityFramework
                );
             builder.Entity<Treatment>()
                .HasData(
-                   new Treatment() { Id = 1, Name = "Manikir", Description = "Neki opis", Price = 1200},
+                   new Treatment() { Id = 1, Name = "Manikir", Description = "Neki opis", Price = 1200 },
                    new Treatment() { Id = 2, Name = "Pedikir", Description = "Neki opis", Price = 1500 }
+               );
+            builder.Entity<WorkingHour>()
+               .HasData(
+                   new WorkingHour() { Id = 1, Time = "8:30" },
+                  new WorkingHour() { Id = 2, Time = "9:30" },
+                  new WorkingHour() { Id = 3, Time = "10:30" },
+                  new WorkingHour() { Id = 4, Time = "11:00" },
+                  new WorkingHour() { Id = 5, Time = "12:00" },
+                  new WorkingHour() { Id = 6, Time = "13:30" },
+                  new WorkingHour() { Id = 7, Time = "14:00" },
+                  new WorkingHour() { Id = 8, Time = "15:00" }
                );
 
             base.OnModelCreating(builder);

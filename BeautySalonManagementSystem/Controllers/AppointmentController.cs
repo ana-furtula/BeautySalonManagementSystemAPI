@@ -106,19 +106,41 @@ namespace BeautySalonManagementSystem.Controllers
 
         }
 
-        [HttpPost("checkTime")]
-        public IActionResult IsTimeAvailable([FromBody] DateModel dateTime)
+        [HttpPost("freeAppointmentTime/{treatmentId}")]
+        public IActionResult GetFreeAppointmentTime([FromBody] DateModel dateTime, int treatmentId)
         {
             try
             {
-                var date = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour.GetValueOrDefault(), dateTime.Minute.GetValueOrDefault(), 0);
+                var date = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
 
-                if (dbContext.ScheduledAppointments.Where(x => x.Date == date).Any())
+                var trApp = dbContext.ScheduledAppointments
+                    .Include(x => x.Treatment)
+                    .Where(x => x.Treatment.Id == treatmentId && x.Date.Date.CompareTo(date.Date) == 0)
+                    .ToList();
+
+                var wH = dbContext.WorkingHours.ToList();
+
+                var freeTerms = new List<string>();
+
+                if(!trApp.Any())
                 {
-                    return new JsonResult("false");
+                    foreach(var w in wH)
+                    {
+                        freeTerms.Add(w.Time);
+                    }
+                    return new JsonResult(freeTerms);
                 }
 
-                return new JsonResult("true");
+
+                foreach(var h in wH)
+                {
+                    if(!trApp.Where(x => x.Date.ToShortTimeString().Equals(h.Time)).Any())
+                    {
+                        freeTerms.Add(h.Time);
+                    }
+                }
+
+                return new JsonResult(freeTerms);
             }
             catch (Exception)
             {
