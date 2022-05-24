@@ -1,6 +1,7 @@
 ﻿using BeautySalonManagementSystem.Models;
 using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
 using Google.Rpc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ namespace BeautySalonManagementSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class NotificationController : ControllerBase
     {
         private readonly BeautySalonContext dbContext;
@@ -20,6 +22,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpGet("read/{userMail}")]
+        [Authorize]
         public IActionResult GetRead(string userMail)
         {
             var notifications = dbContext.Notifications
@@ -31,6 +34,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpGet("unread/{userMail}")]
+        [Authorize]
         public IActionResult GetUnread(string userMail)
         {
             var notifications = dbContext.Notifications
@@ -49,6 +53,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpGet("count/{userMail}")]
+        [Authorize]
         public IActionResult CountUnread(string userMail)
         {
             var notifications = dbContext.Notifications
@@ -61,6 +66,7 @@ namespace BeautySalonManagementSystem.Controllers
 
 
         [HttpDelete("{notificationId}")]
+        [Authorize]
         public IActionResult DeleteAppointment(int notificationId)
         {
             try

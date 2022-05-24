@@ -1,4 +1,5 @@
 ﻿using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BeautySalonManagementSystem.Controllers

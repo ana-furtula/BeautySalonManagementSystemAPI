@@ -1,6 +1,7 @@
 ﻿using BeautySalonManagementSystem.Models;
 using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
 using Google.Rpc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ namespace BeautySalonManagementSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AppointmentController : ControllerBase
     {
         private readonly BeautySalonContext dbContext;
@@ -20,6 +22,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpGet("scheduled")]
+        [Authorize]
         public IActionResult GetAccepted()
         {
             var appointments = dbContext.ScheduledAppointments
@@ -45,6 +48,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpGet("required")]
+        [Authorize]
         public IActionResult GetRequired()
         {
             var appointments = dbContext.ScheduledAppointments
@@ -70,6 +74,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Post([FromBody] AppointmentModel appointment)
         {
             try
@@ -107,6 +112,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpPost("freeAppointmentTime/{treatmentId}")]
+        [Authorize]
         public IActionResult GetFreeAppointmentTime([FromBody] DateModel dateTime, int treatmentId)
         {
             try
@@ -150,6 +156,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpPut("accept")]
+        [Authorize]
         public IActionResult AcceptAppointment([FromBody] int appointmentId)
         {
             try
@@ -179,6 +186,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpPut("reject")]
+        [Authorize]
         public IActionResult RejectAppointment([FromBody] int appointmentId)
         {
             try
@@ -219,6 +227,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpGet("{userMail}")]
+        [Authorize]
         public IActionResult GetAllForUser(string userMail)
         {
 
@@ -247,6 +256,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpDelete("{appointmentId}")]
+        [Authorize]
         public IActionResult DeleteAppointment(int appointmentId)
         {
             try

@@ -1,5 +1,6 @@
 ﻿using BeautySalonManagementSystem.Models;
 using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace BeautySalonManagementSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class NonWorkingDaysController : ControllerBase
     {
         private readonly BeautySalonContext dbContext;
@@ -17,6 +19,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Get()
         {
             var days = dbContext.NonWorkingDays.Select(x => x.Date).ToList();
@@ -35,6 +38,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Post([FromBody] DateModel data)
         {
             try
@@ -63,6 +67,7 @@ namespace BeautySalonManagementSystem.Controllers
 
 
         [HttpDelete]
+        [Authorize]
         public IActionResult Delete([FromBody] DateModel data)
         {
             try

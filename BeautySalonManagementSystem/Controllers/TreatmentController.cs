@@ -1,4 +1,5 @@
 ﻿using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ namespace BeautySalonManagementSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TreatmentController : ControllerBase
     {
         private readonly BeautySalonContext dbContext;
@@ -18,6 +20,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Get()
         {
             var treatments = dbContext.Treatments.ToList();
@@ -26,6 +29,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public IActionResult Get(int id)
         {
             var treatment = dbContext.Treatments.FirstOrDefault(x => x.Id == id);
@@ -37,6 +41,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Post([FromBody]  Treatment treatment)
         {
             try
@@ -53,6 +58,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Delete(int id)
         {
             try
@@ -70,6 +76,7 @@ namespace BeautySalonManagementSystem.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public IActionResult Put([FromBody] Treatment treatment)
         {
             try
