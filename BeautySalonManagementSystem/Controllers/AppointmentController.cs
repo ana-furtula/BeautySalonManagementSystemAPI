@@ -126,11 +126,25 @@ namespace BeautySalonManagementSystem.Controllers
 
                 var wH = dbContext.WorkingHours.ToList();
 
+                if (date.Date.CompareTo(DateTime.Now.Date) == 0)
+                {
+                    HashSet<WorkingHour> toRemove = new HashSet<WorkingHour>();
+                    foreach (var item in wH)
+                    {
+                        var time = TimeOnly.Parse(item.Time);
+                        if (time.CompareTo(TimeOnly.Parse(DateTime.Now.ToShortTimeString())) <= 0)
+                        {
+                            toRemove.Add(item);
+                        }
+                    }
+                    wH.RemoveAll(toRemove.Contains);
+                }
+
                 var freeTerms = new List<string>();
 
-                if(!trApp.Any())
+                if (!trApp.Any())
                 {
-                    foreach(var w in wH)
+                    foreach (var w in wH)
                     {
                         freeTerms.Add(w.Time);
                     }
@@ -138,9 +152,9 @@ namespace BeautySalonManagementSystem.Controllers
                 }
 
 
-                foreach(var h in wH)
+                foreach (var h in wH)
                 {
-                    if(!trApp.Where(x => x.Date.ToShortTimeString().Equals(h.Time)).Any())
+                    if (!trApp.Where(x => x.Date.ToShortTimeString().Equals(h.Time)).Any())
                     {
                         freeTerms.Add(h.Time);
                     }

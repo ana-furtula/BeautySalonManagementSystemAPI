@@ -1,3 +1,4 @@
+using BeautySalonManagementSystem.Controllers;
 using BeautySalonManagementSystem.RepositoryServices.EntityFramework;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,13 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<BeautySalonContext>(options =>
+builder.Services.AddDbContextFactory<BeautySalonContext>(options =>
         options.UseSqlServer(
             builder.Configuration.GetConnectionString("BeautySalonContextDB")));
+/*builder.Services.AddDbContext<BeautySalonContext>(options =>
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString("BeautySalonContextDB")));*/
+builder.Services.AddHostedService<MyHostedService>();
 
 builder.Services.AddCors();
 
@@ -52,7 +57,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors(builder => builder
        .AllowAnyOrigin()
        .AllowAnyMethod()
-       .WithHeaders("Accept", "Content-Type", "Origin", "X-My-Header"));
+       .AllowAnyHeader());
 
 
 app.UseHttpsRedirection();
@@ -61,5 +66,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();
